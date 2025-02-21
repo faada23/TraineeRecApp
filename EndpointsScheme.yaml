@@ -29,17 +29,10 @@ components:
       properties:
         token:
           type: string
+          description: id, name, role
     Pagination:
       type: object
       properties:
-        page:
-          type: integer
-          default: 1
-          description: Page number
-        limit:
-          type: integer
-          default: 10
-          description: Number of items per page
         totalItems:
           type: integer
           description: Total number of items
@@ -76,16 +69,16 @@ components:
           type: string
         fullName:
           type: string
-        groupId:
-          type: integer
-        specialityId:
-          type: integer
+        group:
+          $ref: '#/components/schemas/GroupResponse'
+        speciality:
+          $ref: '#/components/schemas/SpecialityResponse'
     TraineeshipRequest:
       type: object
       properties:
         studentId:
           type: integer
-        companyName:
+        organizationName:
           type: string
         startDate:
           type: string
@@ -93,16 +86,14 @@ components:
         endDate:
           type: string
           format: date
-        status_Id:
-          type: integer
     TraineeshipResponse:
       type: object
       properties:
         id:
           type: integer
-        studentId:
-          type: integer
-        companyName:
+        studentFullname:
+          type: string
+        organizationName:
           type: string
         startDate:
           type: string
@@ -110,8 +101,8 @@ components:
         endDate:
           type: string
           format: date
-        status_Id:
-          type: integer
+        status:
+          $ref : '#/components/schemas/TraineeshipStatusResponse'
     GroupRequest:
       type: object
       properties:
@@ -148,18 +139,18 @@ components:
           type: integer
         name:
           type: string
-    TraineeshipSupervizorRequest:
+    TraineeshipSupervisorRequest:
       type: object
       properties:
         fullName:
           type: string
         phoneNumber:
           type: string
-        supervizorType_Id:
+        supervisorTypeId:
           type: integer
-        Organization_Id:
+        organizationId:
           type: integer
-    TraineeshipSupervizorResponse:
+    TraineeshipSupervisorResponse:
       type: object
       properties:
         id:
@@ -168,17 +159,31 @@ components:
           type: string
         phoneNumber:
           type: string
-        supervizorType_Id:
+        supervisorType:
+          $ref: '#/components/schemas/TraineeshipSupervisorTypeResponse'
+        organization:
+          $ref: '#/components/schemas/OrganizationResponse'
+    TraineeshipStatusResponse:
+      type: object
+      properties:
+        id:
           type: integer
-        Organization_Id:
+        name:
+          type: string
+    TraineeshipSupervisorTypeResponse:
+      type: object
+      properties:
+        id:
           type: integer
+        name:
+          type: string
 
 paths:
   /auth/login:
     post:
       tags:
         - Authentication
-      summary: User login
+      summary: User log in
       requestBody:
         required: true
         content:
@@ -198,10 +203,10 @@ paths:
   /students:
     get:
       tags:
-        - Students
+        - Student
       security:
         - bearerAuth: []
-      summary: Get all students 
+      summary: Get all students
       parameters:
         - name: page
           in: query
@@ -217,6 +222,18 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - name: speciality
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter students by Speciality
+        - name: group
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter students by Group
       responses:
         200:
           description: List of students
@@ -231,9 +248,13 @@ paths:
                       $ref: '#/components/schemas/StudentResponse'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
+        401:
+          description: Unauthorized - Missing or invalid JWT token
+        403:
+          description: Forbidden - Insufficient permissions
     post:
       tags:
-        - Students
+        - Student
       security:
         - bearerAuth: []
       summary: Create new student
@@ -252,7 +273,7 @@ paths:
   /students/{id}:
     get:
       tags:
-        - Students
+        - Student
       security:
         - bearerAuth: []
       summary: Get a student by ID
@@ -271,9 +292,9 @@ paths:
                 $ref: '#/components/schemas/StudentResponse'
         404:
           description: Student not found
-    put:
+    patch:
       tags:
-        - Students
+        - Student
       security:
         - bearerAuth: []
       summary: Update a student by ID
@@ -300,31 +321,14 @@ paths:
           description: Student not found
         400:
           description: Invalid input
-    delete:
-      tags:
-        - Students
-      security:
-        - bearerAuth: []
-      summary: Delete a student by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Student deleted successfully
-        404:
-          description: Student not found
 
   /traineeships:
     get:
       tags:
-        - Traineeships
+        - Traineeship
       security:
         - bearerAuth: []
-      summary: Get all traineeships 
+      summary: Get all traineeships
       parameters:
         - name: page
           in: query
@@ -340,6 +344,26 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter traineeship by Status
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter traineeships by start date
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Filter traineeships by end date
       responses:
         200:
           description: List of traineeships
@@ -356,7 +380,7 @@ paths:
                     $ref: '#/components/schemas/Pagination'
     post:
       tags:
-        - Traineeships
+        - Traineeship
       security:
         - bearerAuth: []
       summary: Create new traineeship
@@ -375,7 +399,7 @@ paths:
   /traineeships/{id}:
     get:
       tags:
-        - Traineeships
+        - Traineeship
       security:
         - bearerAuth: []
       summary: Get a traineeship by ID
@@ -394,9 +418,9 @@ paths:
                 $ref: '#/components/schemas/TraineeshipResponse'
         404:
           description: Traineeship not found
-    put:
+    patch:
       tags:
-        - Traineeships
+        - Traineeship
       security:
         - bearerAuth: []
       summary: Update a traineeship by ID
@@ -423,31 +447,14 @@ paths:
           description: Traineeship not found
         400:
           description: Invalid input
-    delete:
-      tags:
-        - Traineeships
-      security:
-        - bearerAuth: []
-      summary: Delete a traineeship by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Traineeship deleted successfully
-        404:
-          description: Traineeship not found
 
-  /Group:
+  /groups:
     get:
       tags:
         - Group
       security:
         - bearerAuth: []
-      summary: Get all groups 
+      summary: Get all groups
       parameters:
         - name: page
           in: query
@@ -463,6 +470,12 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter groups by name (partial match)
       responses:
         200:
           description: List of groups
@@ -495,28 +508,7 @@ paths:
         400:
           description: Invalid input
 
-  /Group/{id}:
-    get:
-      tags:
-        - Group
-      security:
-        - bearerAuth: []
-      summary: Get a group by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Group details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GroupResponse'
-        404:
-          description: Group not found
+  /groups/{id}:
     put:
       tags:
         - Group
@@ -546,25 +538,8 @@ paths:
           description: Group not found
         400:
           description: Invalid input
-    delete:
-      tags:
-        - Group
-      security:
-        - bearerAuth: []
-      summary: Delete a group by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Group deleted successfully
-        404:
-          description: Group not found
 
-  /Speciality:
+  /specialities:
     get:
       tags:
         - Speciality
@@ -586,6 +561,12 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter specialities by name (partial match)
       responses:
         200:
           description: List of specialities
@@ -617,29 +598,8 @@ paths:
           description: Speciality created
         400:
           description: Invalid input
-          
-  /Speciality/{id}:
-    get:
-      tags:
-        - Speciality
-      security:
-        - bearerAuth: []
-      summary: Get a speciality by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Speciality details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SpecialityResponse'
-        404:
-          description: Speciality not found
+
+  /specialities/{id}:
     put:
       tags:
         - Speciality
@@ -669,31 +629,14 @@ paths:
           description: Speciality not found
         400:
           description: Invalid input
-    delete:
-      tags:
-        - Speciality
-      security:
-        - bearerAuth: []
-      summary: Delete a speciality by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Speciality deleted successfully
-        404:
-          description: Speciality not found
 
-  /Organization:
+  /organizations:
     get:
       tags:
         - Organization
       security:
         - bearerAuth: []
-      summary: Get all organizations 
+      summary: Get all organizations
       parameters:
         - name: page
           in: query
@@ -709,6 +652,12 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter organizations by name (partial match)
       responses:
         200:
           description: List of organizations
@@ -741,28 +690,7 @@ paths:
         400:
           description: Invalid input
 
-  /Organization/{id}:
-    get:
-      tags:
-        - Organization
-      security:
-        - bearerAuth: []
-      summary: Get an organization by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Organization details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrganizationResponse'
-        404:
-          description: Organization not found
+  /organizations/{id}:
     put:
       tags:
         - Organization
@@ -792,28 +720,11 @@ paths:
           description: Organization not found
         400:
           description: Invalid input
-    delete:
-      tags:
-        - Organization
-      security:
-        - bearerAuth: []
-      summary: Delete an organization by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Organization deleted successfully
-        404:
-          description: Organization not found
 
-  /TraineeshipSupervizor:
+  /traineeshipSupervisors:
     get:
       tags:
-        - TraineeshipSupervizor
+        - TraineeshipSupervisor
       security:
         - bearerAuth: []
       summary: Get all traineeship supervisors
@@ -832,6 +743,12 @@ paths:
             type: integer
             default: 10
           description: Number of items per page
+        - name: fullName
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter supervisors by full name (partial match)
       responses:
         200:
           description: List of traineeship supervisors
@@ -843,74 +760,31 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/TraineeshipSupervizorResponse'
+                      $ref: '#/components/schemas/TraineeshipSupervisorResponse'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
-                    
-  /TraineeshipSupervizor/University:
     post:
       tags:
-        - TraineeshipSupervizor
+        - TraineeshipSupervisor
       security:
         - bearerAuth: []
-      summary: Create new TraineeshipSupervizor
+      summary: Create new TraineeshipSupervisor
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TraineeshipSupervizorRequest'
+              $ref: '#/components/schemas/TraineeshipSupervisorRequest'
       responses:
         201:
-          description: TraineeshipSupervizor created
+          description: TraineeshipSupervisor created
         400:
           description: Invalid input
-          
-  /TraineeshipSupervizor/Organization:
-    post:
-      tags:
-        - TraineeshipSupervizor
-      security:
-        - bearerAuth: []
-      summary: Create new TraineeshipSupervizor
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TraineeshipSupervizorRequest'
-      responses:
-        201:
-          description: TraineeshipSupervizor created
-        400:
-          description: Invalid input
-          
 
-  /TraineeshipSupervizor/{id}:
-    get:
+  /traineeshipSupervisors/{id}:
+    patch:
       tags:
-        - TraineeshipSupervizor
-      security:
-        - bearerAuth: []
-      summary: Get a traineeship supervisor by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Traineeship supervisor details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TraineeshipSupervizorResponse'
-        404:
-          description: Traineeship supervisor not found
-    put:
-      tags:
-        - TraineeshipSupervizor
+        - TraineeshipSupervisor
       security:
         - bearerAuth: []
       summary: Update a traineeship supervisor by ID
@@ -925,34 +799,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TraineeshipSupervizorRequest'
+              $ref: '#/components/schemas/TraineeshipSupervisorRequest'
       responses:
         200:
           description: Traineeship supervisor updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TraineeshipSupervizorResponse'
+                $ref: '#/components/schemas/TraineeshipSupervisorResponse'
         404:
           description: Traineeship supervisor not found
         400:
           description: Invalid input
-    delete:
-      tags:
-        - TraineeshipSupervizor
-      security:
-        - bearerAuth: []
-      summary: Delete a traineeship supervisor by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Traineeship supervisor deleted successfully
-        404:
-          description: Traineeship supervisor not found
 security:
   - bearerAuth: []

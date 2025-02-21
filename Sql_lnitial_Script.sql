@@ -39,6 +39,7 @@ CREATE TABLE Traineeship (
     Id SERIAL PRIMARY KEY,
     StartDate DATE NOT NULL,
     EndDate DATE NOT NULL,
+    Grade SMALLINT,
     Status_Id INTEGER NOT NULL,
     Student_Id INTEGER NOT NULL,
     FOREIGN KEY (Status_Id) REFERENCES TraineeshipStatus(Id),
