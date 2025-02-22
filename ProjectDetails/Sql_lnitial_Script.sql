@@ -64,3 +64,28 @@ CREATE TABLE Traineeship_TraineeshipSupervisor (
     FOREIGN KEY (Traineeship_Id) REFERENCES Traineeship(Id),
     FOREIGN KEY (TraineeshipSupervisor_Id) REFERENCES TraineeshipSupervisor(Id)
 );
+
+CREATE TABLE Users (
+    Id SERIAL PRIMARY KEY,
+    FullName VARCHAR(120) NOT NULL,
+    PasswordHash VARCHAR(30) NOT NULL,
+    Email VARCHAR(50) UNIQUE,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Student_Id INTEGER UNIQUE,
+    TraineeshipSupervisor_Id INTEGER ,
+    FOREIGN KEY (Student_Id) REFERENCES Student(Id),
+    FOREIGN KEY (TraineeshipSupervisor_Id) REFERENCES TraineeshipSupervisor(Id)
+);
+
+CREATE TABLE Roles (
+    Id SERIAL PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL 
+);
+
+CREATE TABLE UserRoles (
+    UserId INTEGER NOT NULL,
+    RoleId INTEGER NOT NULL,
+    PRIMARY KEY (UserId, RoleId),
+    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE,
+    FOREIGN KEY (RoleId) REFERENCES Roles(Id) ON DELETE CASCADE
+);
