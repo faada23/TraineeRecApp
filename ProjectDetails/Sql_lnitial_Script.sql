@@ -68,7 +68,7 @@ CREATE TABLE Traineeship_TraineeshipSupervisor (
 CREATE TABLE Users (
     Id SERIAL PRIMARY KEY,
     FullName VARCHAR(120) NOT NULL,
-    PasswordHash VARCHAR(30) NOT NULL,
+    PasswordHash VARCHAR(80) NOT NULL,
     Email VARCHAR(50) UNIQUE,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Student_Id INTEGER UNIQUE,
