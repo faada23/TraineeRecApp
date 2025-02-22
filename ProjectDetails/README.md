@@ -53,3 +53,17 @@
 - **Git**
 
 ---
+
+
+### Какие эндпоинты реализовать для мэнеджера
+-Student GET/POST
+
+-Traineeship GET/POST
+
+-TraineeshipSupervisor GET/POST
+
+-Speciality/Organization/Group GET/POST
+
+-auth/login?
+
+
