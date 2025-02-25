@@ -31,7 +31,6 @@
 
 ### Дополнительные библиотеки:   
 - **FluentValidation** 
-- **Swagger** 
 
 ---
 
@@ -56,14 +55,16 @@
 
 
 ### Какие эндпоинты реализовать для мэнеджера
--Student GET/POST
+-Student GET/POST/PATCH
 
--Traineeship GET/POST
+-Traineeship GET/POST/PATCH
 
--TraineeshipSupervisor GET/POST
+-TraineeshipSupervisor GET/POST/PATCH
 
--Speciality/Organization/Group GET/POST
+-Speciality/Organization/Group GET/POST/PATCH
 
--auth/login?
+-auth/login
+
+-User GET{id}/POST
 
 

@@ -30,6 +30,38 @@ components:
         token:
           type: string
           description: id, name, role
+    UserRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        fullname:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleRequest'
+        student:
+          $ref: '#/components/schemas/StudentResponse'
+        traineeshipSupervisor:
+          $ref: '#/components/schemas/TraineeshipSupervisorResponse'
+    UserResponse:
+      type: object
+      properties:
+        fullname:
+          type: string
+        email:
+          type: string
+        notPassword:
+          type: string
+        roleId:
+          type: integer
+        student:
+          $ref: '#/components/schemas/StudentRequest'
+        traineeshipSupervisor:
+          $ref: '#/components/schemas/TraineeshipSupervisorRequest'
     Pagination:
       type: object
       properties:
@@ -177,6 +209,18 @@ components:
           type: integer
         name:
           type: string
+    RoleRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    RoleResponse:
+      type: object
+      properties:
+        name:
+          type: string  
 
 paths:
   /auth/login:
@@ -199,6 +243,49 @@ paths:
                 $ref: '#/components/schemas/AuthResponse'
         401:
           description: Invalid credentials
+          
+  /user/{id}:
+    get:
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRequest'
+  /user:
+    post:
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      summary: Create User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      responses:
+        200:
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRequest'
+        400:
+          description: Invalid input
 
   /students:
     get:
@@ -720,7 +807,76 @@ paths:
           description: Organization not found
         400:
           description: Invalid input
+  /roles:
+    get:
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+      summary: Get all Roles
+      responses:
+        200:
+          description: List of Roles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RoleResponse'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+    post:
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+      summary: Create new Role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+      responses:
+        201:
+          description: Role created
+        400:
+          description: Invalid input
 
+  /roles/{id}:
+    put:
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+      summary: Update a role by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleRequest'
+      responses:
+        200:
+          description: Group updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        404:
+          description: Role not found
+        400:
+          description: Invalid input
+          
   /traineeshipSupervisors:
     get:
       tags:

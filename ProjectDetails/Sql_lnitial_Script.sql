@@ -1,11 +1,11 @@
 CREATE TABLE SupervisorType (
     Id SERIAL PRIMARY KEY,
-    Name VARCHAR(25) NOT NULL UNIQUE
+    Name VARCHAR(25) NOT NULL
 );
 
 CREATE TABLE TraineeshipStatus (
     Id SERIAL PRIMARY KEY,
-    Name VARCHAR(25) NOT NULL UNIQUE
+    Name VARCHAR(25) NOT NULL
 );
 
 CREATE TABLE Speciality (
@@ -20,7 +20,7 @@ CREATE TABLE GroupName (
 
 CREATE TABLE Organization (
     Id SERIAL PRIMARY KEY,
-    Name VARCHAR(70) NOT NULL
+    Name VARCHAR(70) NOT NULL 
 );
 
 CREATE TABLE Student (
@@ -65,27 +65,21 @@ CREATE TABLE Traineeship_TraineeshipSupervisor (
     FOREIGN KEY (TraineeshipSupervisor_Id) REFERENCES TraineeshipSupervisor(Id)
 );
 
-CREATE TABLE Users (
+CREATE TABLE User (
     Id SERIAL PRIMARY KEY,
     FullName VARCHAR(120) NOT NULL,
     PasswordHash VARCHAR(80) NOT NULL,
     Email VARCHAR(50) UNIQUE,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Student_Id INTEGER UNIQUE,
-    TraineeshipSupervisor_Id INTEGER ,
+    Student_Id INTEGER,
+    TraineeshipSupervisor_Id INTEGER,
+    Role_Id INTEGER NOT NULL,
     FOREIGN KEY (Student_Id) REFERENCES Student(Id),
+    FOREIGN KEY (Role_Id) REFERENCES Role(Id),
     FOREIGN KEY (TraineeshipSupervisor_Id) REFERENCES TraineeshipSupervisor(Id)
 );
 
-CREATE TABLE Roles (
+CREATE TABLE Role (
     Id SERIAL PRIMARY KEY,
     Name VARCHAR(50) NOT NULL 
-);
-
-CREATE TABLE UserRoles (
-    UserId INTEGER NOT NULL,
-    RoleId INTEGER NOT NULL,
-    PRIMARY KEY (UserId, RoleId),
-    FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE,
-    FOREIGN KEY (RoleId) REFERENCES Roles(Id) ON DELETE CASCADE
 );
