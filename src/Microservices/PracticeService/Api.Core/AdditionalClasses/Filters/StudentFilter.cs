@@ -11,11 +11,6 @@ public class StudentFilter : IFilter<Student>
     
     public Expression<Func<Student, bool>> ToExpression()
     {
-        return student => 
-            (string.IsNullOrEmpty(GroupName) || 
-            student.Groupname.Name.Contains(GroupName))
-            &&
-            (string.IsNullOrEmpty(Specialty) || 
-            student.Speciality.Name.Contains(Specialty)); 
+        throw new NotImplementedException();
     }
 }
