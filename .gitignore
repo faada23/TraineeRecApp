@@ -1,0 +1,13 @@
+src/Microservices/PracticeService/Api.Application/bin
+src/Microservices/PracticeService/Api.Application/obj
+src/Microservices/PracticeService/Api.Core/bin
+src/Microservices/PracticeService/Api.Core/obj
+src/Microservices/PracticeService/Api.Persistence/bin
+src/Microservices/PracticeService/Api.Persistence/obj
+src/Microservices/PracticeService/Api.Web/bin
+src/Microservices/PracticeService/Api.Web/obj
+src/Microservices/PracticeService/Api.Infrastructure/bin
+src/Microservices/PracticeService/Api.Infrastructure/obj
+src/Microservices/PracticeService/Api.Web/appsettings.Development.json
+src/Microservices/PracticeService/Api.Web/appsettings.json
+src/Microservices/PracticeService/Api.sln
