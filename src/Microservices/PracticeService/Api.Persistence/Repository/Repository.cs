@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Api.Core.AdditionalClasses;
 using Api.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -83,13 +84,13 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         }
     }
 
-    public async Task<Result<T>> GetById(int id, string? includeProperties = null)
+    public async Task<Result<T>> FindBy(Expression<Func<T, bool>> expression, string? includeProperties = null)
     {
         try
         {
             IQueryable<T> query = dbSet;
 
-            query = query.Where(u => u.Id == id);
+            query = query.Where(expression);
 
             if (!string.IsNullOrEmpty(includeProperties))
             {

@@ -1,9 +1,9 @@
 public record StudentRequest
 (
-    DateTime? Birthday,
+    DateOnly Birthday,
     string PhoneNumber, 
-    string Course,
+    char Course,
     string FullName,
-    int? GroupId, 
-    int? SpecialityId 
+    int GroupId, 
+    int SpecialityId 
 );

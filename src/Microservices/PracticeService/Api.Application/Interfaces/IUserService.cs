@@ -3,7 +3,7 @@ using API.Application.DTOs;
 
 namespace Api.Application.interfaces;
 
-public interface IAuthService 
+public interface IUserService 
 {   
-    public Task<Result<string?>> Login(LoginRequest userRequest);
+    public Task<Result<int>> CreateUser(CreateUserRequest userRequest);
 }
